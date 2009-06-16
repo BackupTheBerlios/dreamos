@@ -4,14 +4,33 @@
 
 NAME = DreamOS
 VERSION = 0
-PATCHLEVEL = 1.1
+PATCHLEVEL = 1.2
 EXTRAVERSION = -trunk
 
-CFLAGS = -nostdlib -nostdinc -fomit-frame-pointer -fno-builtin -fno-stack-protector -Wall -march=i686 -m32 -I./include -I./include/io -I./include/drivers -I./include/libc -I./include/processore -I./include/hardware -I./include/mem -I./include/system -I./include/shell -I./include/misc
+CFLAGS = -nostdlib\
+	 -nostdinc\
+	 -fomit-frame-pointer\
+     -fno-builtin\
+	 -fno-stack-protector\
+	 -Wall\
+	 -march=i686\
+     -m32\
+	 -I./include\
+	 -I./include/io\
+	 -I./include/drivers\
+     -I./include/libc\
+	 -I./include/processore\
+	 -I./include/hardware\
+	 -I./include/mem\
+	 -I./include/system\
+	 -I./include/shell\
+	 -I./include/misc\
+	 -DBOCHS_DEBUG
 
 OBJ = kernel.o\
       io/video.o\
       drivers/keyboard.o\
+      drivers/mouse.o\
       libc/ctype.o\
       libc/string.o\
       io/io.o\
@@ -64,6 +83,7 @@ misc/ordered_list.o: misc/ordered_list.c
 misc/bitops.o: misc/bitops.c
 misc/debug.o: misc/debug.c
 drivers/keyboard.o: drivers/keyboard.c
+drivers/mouse.o: drivers/mouse.c
 system/syscall.o: system/syscall.c
 hardware/8253.o: hardware/8253.c
 shell/shell.o: shell/shell.c

@@ -165,34 +165,31 @@ void _irqinterrupt(){
     irqn = get_current_irq();  
     IRQ_s* tmpHandler; 
     if(irqn>=0) {
-//       switch(irqn){
-// 	case 1: 
-// 	  PIT_handler();
-// 	  break;
-// 	case 2:
-// 	  keyboard_isr();
-// 	  break;
-//       }
-         tmpHandler = shareHandler[irqn];
-	 if(tmpHandler!=0) {
-	    tmpHandler->IRQ_func();
-	    #ifdef DEBUG
-	    printf("2 - IRQ_func: %d, %d\n", tmpHandler->IRQ_func, tmpHandler);
-	    #endif
-	    while(tmpHandler->next!=NULL) {
-	      tmpHandler = tmpHandler->next;                           
-	      #ifdef DEBUG
-	      printf("1 - IRQ_func (_prova): %d, %d\n", tmpHandler->IRQ_func, tmpHandler);
-	      #endif
-	      if(tmpHandler!=0) tmpHandler->IRQ_func();
-	    }
+		if(irqn==2) {
+			outportb(SLAVE_PORT,GET_IRR_STATUS);
+			irqn = inportb(SLAVE_PORT);
+			irqn = 8 + find_first_bit(irqn);			
+		}
+        tmpHandler = shareHandler[irqn];		
+		if(tmpHandler!=0) {
+	    	tmpHandler->IRQ_func();
+	    	#ifdef DEBUG
+	    		printf("2 - IRQ_func: %d, %d\n", tmpHandler->IRQ_func, tmpHandler);
+	    	#endif
+	    	while(tmpHandler->next!=NULL) {
+	      		tmpHandler = tmpHandler->next;                           
+	      		#ifdef DEBUG
+	      			printf("1 - IRQ_func (_prova): %d, %d\n", tmpHandler->IRQ_func, tmpHandler);
+	      		#endif
+	      		if(tmpHandler!=0) tmpHandler->IRQ_func();
+	    	}
 	  } else printf("irqn: %d\n", irqn);
     }
     else printf("IRQ N: %d E' arrivato qualcosa che non so gestire ", irqn);
-    if(irqn<=8) outportb(0x20, MASTER_PORT);
-    else if(irqn<=16){
-      outportb(0x20, SLAVE_PORT);
-      outportb(0x20, MASTER_PORT);
+    if(irqn<=8 && irqn!=2) outportb(MASTER_PORT, EOI);
+    else if(irqn<=16 || irqn==2){	  
+      outportb(SLAVE_PORT, EOI);
+      outportb(MASTER_PORT, EOI);
     }
 }
 
@@ -201,9 +198,4 @@ void _int_rsv(){
 	while(1);
 }
 
-/*void _prova(){
-    #ifdef DEBUG
-    _kputs("Shared 1\n");
-    #endif    
-}*/
 

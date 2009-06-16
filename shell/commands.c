@@ -20,6 +20,7 @@
 #include <cpuid.h>
 #include <clock.h>
 #include <sys/utsname.h>
+#include <mouse.h>
 
 void aalogo()
 {
@@ -40,9 +41,9 @@ void logo()
   printf("\n");
   printf("\t\t\t The Dream Operating System \n"
 	 "\t\t           v%s.%s%s %s      \n\n"
-	 "\t\t\t\t Welcome to DreamOS\n"
-	 "\t\t Where dreams don't become Reality and remain dreams. \n"
-	 "\t\t\tR.I.P - Rest in peace with dreamos ^_^        \n", 
+	 "\t\t\t   Welcome to DreamOS\n"
+	 "\t  Where dreams don't become Reality and remain dreams. \n"
+	 "\t          R.I.P - Rest in peace with dreamos ^_^        \n", 
 	 VERSION, PATCHLEVEL, EXTRAVERSION, REV_NUM);
 	
   printf("\n\n\n\n");
@@ -64,7 +65,8 @@ void help()
 	 "sleep     - pause DreamOS for a particular number of seconds\n"
 	 "cpuid     - Show cpu identification informations\n"
 	 "date      - Show date and time\n"
-	 "echo      - Print some lines of text\n");
+	 "echo      - Print some lines of text\n"
+	 "modprobe  - Tool to load and kill modules\n");
 }
 
 void echo()
@@ -222,6 +224,7 @@ void credits(void)
   _kputs("Main Developers:\n");
   _kcolor('\012');
    printf("Shainer - Lisa\n"
+	  "Osiris\n"
           "Finarfin - Ivan\n\n\n"            
          );
 
@@ -229,8 +232,8 @@ void credits(void)
   _kputs("Contributors:\n");
   _kcolor('\012');
   _kputs("vinc94\n"
-  		 "tk0\n"
-  		 "Osiris\n"
+	  "tk0\n"
+	  "DT\n"
          "Celeron\n"
 	 "Hamcha\n"
          "m0nt0\n"
@@ -320,4 +323,52 @@ void answer(void)
 {
   printf("42\n");
 }
+
+void modprobe(void)
+{
+  if (argc < 2)
+      printf("No module inserted or bad usage! Type modprobe --help for the usage.\n");
+  
+  else
+  {
+      if ( argv[2] != NULL && (_kstrncmp (argv[1], "-r", 2) == 0) && 
+	  (_kstrncmp (argv[2], "mouse", 5) == 0) )
+      {
+	  printf("Removing %s..\n", argv[2]);
+	  mouse_dead();
+      }
+      /* per ora lo impostiamo così, static,
+      tanto non abbiamo nessun altro modulo, per ora.. */
+      else if (_kstrncmp (argv[1], "mouse", 5) == 0)
+      {
+	 /* enabling mouse */
+	 mouse_init();
+       }
+
+      else if (_kstrncmp (argv[1], "--help", 6) == 0)
+      {
+	  printf("---------------------------------------------------\n"
+		 "Module tool to load and kill modules\n"
+		 "Simple to use, just type:\n"
+		 "\n"
+		 "Usage: %s -<options> module_name\n"
+		 "\t-> %s module_name     - to load module\n"
+		 "\t-> %s -r module_name  - to kill module\n"
+		  "---------------------------------------------------\n"
+		  , argv[0], argv[0], argv[0]);
+      }
+
+      else
+	 if ( (_kstrncmp (argv[1], "-r", 2) == 0) && (_kstrncmp (argv[2], "mouse", 5) == -1) )
+	 {   printf("FATAL: Module %s not found.\n", argv[2]); }
+	
+	 else
+	     printf("FATAL: Module %s not found.\n", argv[1]);
+
+   }
+
+
+}
+
+
 

@@ -98,8 +98,11 @@ heap_t* make_heap(unsigned int size)
     new_heap->free_list = first_node;
     new_heap->used_list = NULL;
     new_heap->free_nodes = NULL;
-    printf("\tFirst heap created...\n");   
-    printf("\tSize: %d - Tot mem: %d - Start address: %x\n", (new_heap->free_list)->size, tot_mem, new_heap);    
+    printf("  First heap created...\n");   
+    printf("  Size: %d\n"
+	   "  Tot mem: %d\n"
+	   "  Start address: %x\n", (new_heap->free_list)->size, tot_mem, new_heap);    
+	set_pagetable_entry_ric(1019, 512 ,0xFEE00000, SUPERVISOR|PD_PRESENT|WRITE, 0);
     return (heap_t*) new_heap;
 }
     
